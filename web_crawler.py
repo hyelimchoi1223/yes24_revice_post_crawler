@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import os.path
 
 URL = 'http://blog.yes24.com/BlogMain/Review/NewReview'
 
@@ -33,4 +34,8 @@ new_data = crawler_new_post(soup)
 df = pd.DataFrame(new_data)
 df.rename(columns={0: 'Url', 1: 'Date'}, inplace=True)
 df = df[['Date', 'Url']]
-df.to_csv('test.csv', header=False, index=False)
+
+if os.path.isfile('test.csv'):
+    past_csv = pd.read_csv('test.csv', usecols=[0, 1])
+    df = pd.concat([past_csv, df], axis=0, ignore_index=True).reset_index()
+df.to_csv('test.csv',  index=False)
